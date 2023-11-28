@@ -170,9 +170,11 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 break
             elif key_Y_.value() == 0:
                 print(2)
+                interrupt = machine.disable_irq()
+                LCD.fill(st7789.BLACK)
+                del snake, game_map
                 return
-    interrupt = machine.disable_irq()
-    LCD.fill(st7789.BLACK)
+
 
 
 if __name__ == "__main__":
