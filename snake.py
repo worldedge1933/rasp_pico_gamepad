@@ -19,7 +19,7 @@ def set_4_4_pix(LCD : st7789.ST7789, coor : list, color : int) -> None:
         for j in range(0, 4):
             LCD.pixel(coor[0]*4 + i, coor[1]*4 + j, color)
             
-def get_next_move(dir : int) -> list:
+def get_next_move(dir : int, snake) -> list:
     '''
     获取蛇前进方向的下一个游戏坐标
     '''
@@ -32,22 +32,22 @@ def get_next_move(dir : int) -> list:
     elif dir == -2:
         return [snake[0][0] + 1, snake[0][1] - 0]
 
-def move_a_step(LCD: st7789.ST7789, next_coor , eat_apple=False):
+def move_a_step(LCD: st7789.ST7789, next_coor, snake, eat_apple=False):
     '''
     实现蛇身向前走一步的显示
-    把向前走的游戏坐标添加到game_map里
+    修改蛇身记录
     '''
-    global snake
     snake.insert(0, next_coor)
     set_4_4_pix(LCD, snake[0], st7789.BLACK)
     if eat_apple == False:
         set_4_4_pix(LCD, snake[-1], st7789.WHITE)
+        snake.pop()
+    return snake
     
-def create_an_apple(LCD):
+def create_an_apple(LCD, game_map):
     '''
     在空白处生成一个苹果，显示，并返回苹果游戏坐标
     '''
-    global game_map
     apple_coor = [30, 30]
     while True:
         apple_coor[0] = random.randint(0, 59)
@@ -83,7 +83,6 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
     key_down_.irq(down_interrupt, Pin.IRQ_FALLING)
     key_left_.irq(left_interrupt, Pin.IRQ_FALLING)
     key_right_.irq(right_interrupt, Pin.IRQ_FALLING)
-    exit_game = 0
     # 游戏循环
 
     while True:
@@ -125,32 +124,31 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
         for ls in snake:
             game_map[ls[0]][ls[1]] = 1
             set_4_4_pix(LCD, ls, st7789.BLACK)
-        print(7)
-        apple_coor_tem = create_an_apple(LCD)
-        print(6)
+#        print(7)
+        apple_coor_tem = create_an_apple(LCD, game_map)
+#        print(6)
         game_map[apple_coor_tem[0]][apple_coor_tem[1]] = -1
-        print(4)
+#        print(4)
         
         while True:
-            print(5)
+#            print(5)
             direct_tem = direct_state
-            next_coor_tem = get_next_move(direct_tem)
-            print(3)
+            next_coor_tem = get_next_move(direct_tem, snake)
+#            print(3)
             if (next_coor_tem[0] >= 60 or next_coor_tem[0] < 0) or (next_coor_tem[1] >= 60 or next_coor_tem[1] < 0):
                 break
             elif game_map[next_coor_tem[0]][next_coor_tem[1]] == 1:
                 break
             elif game_map[next_coor_tem[0]][next_coor_tem[1]] == -1:
                 game_map[next_coor_tem[0]][next_coor_tem[1]] = 1
-                move_a_step(LCD, next_coor_tem, eat_apple=True)
-                apple_coor_tem = create_an_apple(LCD)
+                snake = move_a_step(LCD, next_coor_tem, snake, eat_apple=True)
+                apple_coor_tem = create_an_apple(LCD, game_map)
                 game_map[apple_coor_tem[0]][apple_coor_tem[1]] = -1
                 utime.sleep(rest_time)
             else:
                 game_map[next_coor_tem[0]][next_coor_tem[1]] = 1
-                move_a_step(LCD, next_coor_tem)
                 game_map[snake[-1][0]][snake[-1][1]] = 0
-                snake.pop()
+                snake = move_a_step(LCD, next_coor_tem, snake)
                 utime.sleep(rest_time)
         score = len(snake) - 10
         LCD.fill(st7789.BLACK)
@@ -164,15 +162,13 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 f.write(str(score))
         LCD.text(vga1_16x16, "new game", 102, 142, color=st7789.WHITE, background=st7789.BLACK)
         LCD.text(vga1_16x16, "exit", 166, 202, color=st7789.WHITE, background=st7789.BLACK)
-        print(1)
+#        print(1)
         while True:
             if key_X_.value() == 0:
                 break
             elif key_Y_.value() == 0:
-                print(2)
-                interrupt = machine.disable_irq()
+#                print(2)
                 LCD.fill(st7789.BLACK)
-                del snake, game_map
                 return
 
 
@@ -197,7 +193,6 @@ if __name__ == "__main__":
     key_X = Pin(19, Pin.IN, Pin.PULL_UP)
     key_Y = Pin(21, Pin.IN, Pin.PULL_UP)
 
-    main(tft, key_up, key_down, key_left, key_right, key_A, key_B, key_X, key_Y)
-
-
+    snake_state = main(tft, key_up, key_down, key_left, key_right, key_A, key_B, key_X, key_Y)
+    print(snake_state)
 

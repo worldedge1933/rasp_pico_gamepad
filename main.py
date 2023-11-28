@@ -4,7 +4,7 @@ import vga1_16x16
 import vga1_8x8 
 import gc
 
-def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, key_right_ : Pin, key_A_ : Pin, key_B_ : Pin, key_X_ : Pin, key_Y_ : Pin) -> None:
+def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_right_: Pin, key_A_: Pin, key_B_: Pin, key_X_: Pin, key_Y_: Pin) -> None:
     while True:
         LCD.text(vga1_8x8, "games:", 10, 30, color=st7789.WHITE, background=st7789.BLACK)
         LCD.text(vga1_8x8, "1.snake", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
@@ -14,7 +14,7 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 import snake
                 snake.main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
                 del snake
-                gc.collect()
+                gc.collect
                 break
 
 
