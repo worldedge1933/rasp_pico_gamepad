@@ -110,15 +110,19 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
         while True:
             if key_A_.value() == 0:
                 rest_time = 0.3
+                level = 1
                 break
             if key_B_.value() == 0:
                 rest_time = 0.15
+                level = 2
                 break
             if key_X_.value() == 0:
                 rest_time = 0.05
+                level = 3
                 break
             if key_Y_.value() == 0:
                 rest_time = 0.01
+                level = 4
                 break
         LCD.fill(st7789.WHITE)
         for ls in snake:
@@ -153,12 +157,12 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
         score = len(snake) - 10
         LCD.fill(st7789.BLACK)
         LCD.text(vga1_16x16, "your score :{0}".format(score), 4, 30, color=st7789.WHITE, background=st7789.BLACK)
-        with open('snake.csv', "r") as f:
+        with open(f'snake{level}.csv', "r") as f:
             data = f.readlines()
             best_score = int(data[0])
         LCD.text(vga1_16x16, "best score :{0}".format(best_score), 4, 90, color=st7789.WHITE, background=st7789.BLACK)
         if score > best_score:
-            with open('snake.csv', 'w') as f:
+            with open(f'snake{level}.csv', 'w') as f:
                 f.write(str(score))
         LCD.text(vga1_16x16, "new game", 102, 142, color=st7789.WHITE, background=st7789.BLACK)
         LCD.text(vga1_16x16, "exit", 166, 202, color=st7789.WHITE, background=st7789.BLACK)
