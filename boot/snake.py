@@ -4,7 +4,7 @@
 
 
 import random
-import utime
+import time
 import machine
 from machine import Pin, SoftSPI
 import st7789py as st7789
@@ -148,12 +148,12 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 snake = move_a_step(LCD, next_coor_tem, snake, eat_apple=True)
                 apple_coor_tem = create_an_apple(LCD, game_map)
                 game_map[apple_coor_tem[0]][apple_coor_tem[1]] = -1
-                utime.sleep(rest_time)
+                time.sleep(rest_time)
             else:
                 game_map[next_coor_tem[0]][next_coor_tem[1]] = 1
                 game_map[snake[-1][0]][snake[-1][1]] = 0
                 snake = move_a_step(LCD, next_coor_tem, snake)
-                utime.sleep(rest_time)
+                time.sleep(rest_time)
         score = len(snake) - 10
         LCD.fill(st7789.BLACK)
         LCD.text(vga1_16x16, "your score :{0}".format(score), 4, 30, color=st7789.WHITE, background=st7789.BLACK)
