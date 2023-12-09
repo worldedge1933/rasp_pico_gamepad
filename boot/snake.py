@@ -156,11 +156,13 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 time.sleep(rest_time)
         score = len(snake) - 10
         LCD.fill(st7789.BLACK)
-        LCD.text(vga1_16x16, "your score :{0}".format(score), 4, 30, color=st7789.WHITE, background=st7789.BLACK)
+        LCD.text(vga1_16x16, "your score :".format(score), 4, 30, color=st7789.WHITE, background=st7789.BLACK)
+        LCD.text(vga1_16x16, "{0}".format(score), 4, 60, color=st7789.WHITE, background=st7789.BLACK)
         with open(f'snake{level}.csv', "r") as f:
             data = f.readlines()
             best_score = int(data[0])
-        LCD.text(vga1_16x16, "best score :{0}".format(best_score), 4, 90, color=st7789.WHITE, background=st7789.BLACK)
+        LCD.text(vga1_16x16, "best score :".format(best_score), 4, 90, color=st7789.WHITE, background=st7789.BLACK)
+        LCD.text(vga1_16x16, "{0}".format(best_score), 4, 120, color=st7789.WHITE, background=st7789.BLACK)
         if score > best_score:
             with open(f'snake{level}.csv', 'w') as f:
                 f.write(str(score))
