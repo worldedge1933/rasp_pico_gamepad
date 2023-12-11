@@ -1,4 +1,4 @@
-from machine import Pin, SoftSPI
+from machine import Pin, SPI
 import st7789py as st7789
 import vga1_16x16
 import gc
@@ -14,23 +14,27 @@ def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_r
         LCD.text(vga1_16x16, "choose", 134, 202, color=st7789.WHITE, background=st7789.BLACK)
         while True:
             if key_Y_.value() == 0:
-                import snake
-                snake.main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
-                del snake
-                gc.collect()
+                while True:
+                    if key_Y_.value() == 1:
+                        import snake
+                        snake.main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
+                        del snake
+                        gc.collect()
+                        break
                 break
 
 
 if __name__ == "__main__":
     tft = st7789.ST7789(
-        SoftSPI(baudrate=30000000, polarity=1, sck=Pin(10), mosi=Pin(11), miso=Pin(16)),
-        240,
-        240,
-        reset=Pin(12, Pin.OUT),
-        cs=Pin(9, Pin.OUT),
-        dc=Pin(8, Pin.OUT),
-        backlight=Pin(13, Pin.OUT),
-        rotation=1)
+            SPI(1,100000_000,polarity=1, phase=1,sck=Pin(10),mosi=Pin(11),miso=None),
+            240,
+            240,
+            reset=Pin(12, Pin.OUT),
+            cs=Pin(9, Pin.OUT),
+            dc=Pin(8, Pin.OUT),
+            backlight=Pin(13, Pin.OUT),
+            rotation=1
+        )
 
     key_up = Pin(2, Pin.IN, Pin.PULL_UP)
     key_down = Pin(18, Pin.IN, Pin.PULL_UP)

@@ -6,7 +6,7 @@
 import random
 import time
 import machine
-from machine import Pin, SoftSPI
+from machine import Pin, SPI
 import st7789py as st7789
 import vga1_16x16 
 
@@ -125,6 +125,7 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 level = 4
                 break
         LCD.fill(st7789.WHITE)
+        time.sleep(0.5)
         for ls in snake:
             game_map[ls[0]][ls[1]] = 1
             set_4_4_pix(LCD, ls, st7789.BLACK)
@@ -140,8 +141,10 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
             next_coor_tem = get_next_move(direct_tem, snake)
 #            print(3)
             if (next_coor_tem[0] >= 60 or next_coor_tem[0] < 0) or (next_coor_tem[1] >= 60 or next_coor_tem[1] < 0):
+                time.sleep(0.5)
                 break
             elif game_map[next_coor_tem[0]][next_coor_tem[1]] == 1:
+                time.sleep(0.5)
                 break
             elif game_map[next_coor_tem[0]][next_coor_tem[1]] == -1:
                 game_map[next_coor_tem[0]][next_coor_tem[1]] = 1
@@ -171,24 +174,30 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
 #        print(1)
         while True:
             if key_X_.value() == 0:
+                while True:
+                    if key_X_.value() == 1:
+                        break
                 break
-            elif key_Y_.value() == 0:
+            if key_Y_.value() == 0:
 #                print(2)
-                LCD.fill(st7789.BLACK)
-                return
+                while True:
+                    if key_Y_.value() == 1:
+                        LCD.fill(st7789.BLACK)
+                        return
 
 
 
 if __name__ == "__main__":
     tft = st7789.ST7789(
-        SoftSPI(baudrate=30000000, polarity=1, sck=Pin(10), mosi=Pin(11), miso=Pin(16)),
-        240,
-        240,
-        reset=Pin(12, Pin.OUT),
-        cs=Pin(9, Pin.OUT),
-        dc=Pin(8, Pin.OUT),
-        backlight=Pin(13, Pin.OUT),
-        rotation=1)
+            SPI(1,100000_000,polarity=1, phase=1,sck=Pin(10),mosi=Pin(11),miso=None),
+            240,
+            240,
+            reset=Pin(12, Pin.OUT),
+            cs=Pin(9, Pin.OUT),
+            dc=Pin(8, Pin.OUT),
+            backlight=Pin(13, Pin.OUT),
+            rotation=1
+        )
 
     key_up = Pin(2, Pin.IN, Pin.PULL_UP)
     key_down = Pin(18, Pin.IN, Pin.PULL_UP)
