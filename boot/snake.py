@@ -32,7 +32,7 @@ def get_next_move(dir : int, snake) -> list:
     elif dir == -2:
         return [snake[0][0] + 1, snake[0][1] - 0]
 
-def move_a_step(LCD: st7789.ST7789, next_coor, snake, eat_apple=False):
+def move_a_step(LCD: st7789.ST7789, next_coor, snake, eat_apple=False) -> None:
     '''
     实现蛇身向前走一步的显示
     修改蛇身记录
@@ -44,7 +44,7 @@ def move_a_step(LCD: st7789.ST7789, next_coor, snake, eat_apple=False):
         snake.pop()
     return snake
     
-def create_an_apple(LCD, game_map):
+def create_an_apple(LCD: st7789.ST7789, game_map: list) -> list:
     '''
     在空白处生成一个苹果，显示，并返回苹果游戏坐标
     '''
@@ -109,20 +109,32 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
         rest_time = 0.3
         while True:
             if key_A_.value() == 0:
-                rest_time = 0.3
-                level = 1
+                while True:
+                    if key_A_.value() == 1:
+                        rest_time = 0.3
+                        level = 1
+                        break
                 break
             if key_B_.value() == 0:
-                rest_time = 0.15
-                level = 2
+                while True:
+                    if key_B_.value() == 1:
+                        rest_time = 0.15
+                        level = 2
+                        break
                 break
             if key_X_.value() == 0:
-                rest_time = 0.05
-                level = 3
+                while True:
+                    if key_X_.value() == 1:
+                        rest_time = 0.05
+                        level = 3
+                        break
                 break
             if key_Y_.value() == 0:
-                rest_time = 0.01
-                level = 4
+                while True:
+                    if key_Y_.value() == 1:
+                        rest_time = 0.01
+                        level = 4
+                        break
                 break
         LCD.fill(st7789.WHITE)
         time.sleep(0.5)
