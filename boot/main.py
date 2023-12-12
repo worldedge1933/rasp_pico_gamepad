@@ -3,6 +3,7 @@ import st7789py as st7789
 import vga1_16x16
 import gc
 from draw import draw
+import snake
 
 def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_right_: Pin, key_A_: Pin, key_B_: Pin, key_X_: Pin, key_Y_: Pin) -> None:
     pen = draw(LCD)
@@ -16,9 +17,7 @@ def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_r
             if key_Y_.value() == 0:
                 while True:
                     if key_Y_.value() == 1:
-                        import snake
                         snake.main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
-                        del snake
                         gc.collect()
                         break
                 break
