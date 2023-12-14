@@ -28,11 +28,12 @@ class Main_menu:
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
     def show(self) -> None:
         self.LCD.fill(st7789.BLACK)
+        self.pen.drawcsv('check_icon.csv',48,48,186,186,reverse=True)
         self.LCD.text(vga1_16x16, "game:", 10, 30, color=st7789.WHITE, background=st7789.BLACK)
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
-        self.pen.arrow(240 - 30 - 10, 75, 30, 'r')
-        self.pen.arrow(240 - 30 - 10, 135, 30, 'l')
-        self.LCD.text(vga1_16x16, "choose", 134, 202, color=st7789.WHITE, background=st7789.BLACK)
+        self.pen.arrow(240 - 30 - 18, 75, 30, 'r')
+        self.pen.arrow(240 - 30 - 18, 135, 30, 'l')
+#        self.LCD.text(vga1_16x16, "choose", 134, 202, color=st7789.WHITE, background=st7789.BLACK)
 
 
 
@@ -58,7 +59,6 @@ def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_r
                 while True:
                     if key_Y_.value() == 1:
                         main_menu.games[main_menu.current_game].main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
-                        gc.collect()
                         break
                 break
 
@@ -83,5 +83,7 @@ if __name__ == "__main__":
     key_B = Pin(17, Pin.IN, Pin.PULL_UP)
     key_X = Pin(19, Pin.IN, Pin.PULL_UP)
     key_Y = Pin(21, Pin.IN, Pin.PULL_UP)
-
+    
+    gc.enable()
+    
     main(tft, key_up, key_down, key_left, key_right, key_A, key_B, key_X, key_Y)

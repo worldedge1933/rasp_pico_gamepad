@@ -1,6 +1,7 @@
 from machine import Pin, SPI
 import time
 import st7789py as st7789
+import framebuf
 class draw():
     def __init__(self, LCD: st7789.ST7789) -> None:
         self.LCD = LCD
@@ -31,6 +32,36 @@ class draw():
             self.LCD.line(x0 + (size // 2 + size % 2) - 1, y0 + size -1, x0, y0, color)
             self.LCD.line(x0 + (size // 2 + size % 2) - 1, y0 + size -1, x0 + size - 1, y0, color)
 
+    def drawcsv(self, src: str, width, height, x0: int=0, y0: int=0, reverse: bool=False, mode='d'):
+        fbuf = framebuf.FrameBuffer(bytearray(width * height * 2), height, width, framebuf.RGB565)
+        if reverse == False:
+            with open(src, mode='r') as file:
+                j = 0
+                for line in file.readlines():
+                    colors = line.rstrip().split(',')
+                    for i, color in enumerate(colors):
+                        if color == '0':
+                            fbuf.pixel(i,j,0x0000)
+                        else:
+                            fbuf.pixel(i,j,0xFFFF)
+                    j += 1
+        if reverse == True:
+            with open(src, mode='r') as file:
+                j = 0
+                for line in file.readlines():
+                    colors = line.rstrip().split(',')
+                    for i, color in enumerate(colors):
+                        if color == '0':
+                            fbuf.pixel(i,j,0xFFFF)
+                        else:
+                            fbuf.pixel(i,j,0x0000)
+                    j += 1
+        if mode == 'd':
+            self.LCD.blit_buffer(fbuf,x0,y0,width,height)
+        if mode == 'r':
+            return fbuf
+                    
+            
 
 if __name__ == "__main__":
     tft = st7789.ST7789(
@@ -50,3 +81,5 @@ if __name__ == "__main__":
         tft.fill_rect(30,30,30,30,st7789.BLACK)
         pen.arrow(30,30,30,str)
         time.sleep(0.5)
+    tft.fill(st7789.BLACK)
+    pen.drawcsv("check_icon.csv",48,48,30,30)
