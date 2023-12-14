@@ -9,7 +9,7 @@ class Main_menu:
     def __init__(self, LCD: st7789.ST7789) -> None:
         self.LCD = LCD
         self.pen = draw(LCD)
-        self.games_name = ['snake', 'waiting']
+        self.games_name = ['snake', 'coming']
         self.games = [snake, snake]
         self.current_game = 0
     def next_game(self):
