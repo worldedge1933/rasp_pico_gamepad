@@ -1,6 +1,7 @@
 from machine import Pin, SPI
 import st7789py as st7789
 import framebuf
+import time
 
 
 if __name__ == "__main__":
@@ -14,13 +15,11 @@ if __name__ == "__main__":
             backlight=Pin(13, Pin.OUT),
             rotation=1
         )
-    tft.fill(st7789.RED)
+    tft.fill(st7789.BLUE)
     # FrameBuffer needs 2 bytes for every RGB565 pixel
-    fbuf = framebuf.FrameBuffer(bytearray(20 * 100 * 2), 100, 20, framebuf.RGB565)
+    fbuf = framebuf.FrameBuffer(bytearray(50 * 100 * 2), 50, 100, framebuf.RGB565)
 
-    fbuf.fill(0)
-    fbuf.text('MicroPython!', 0, 0, 0xffff)
-    fbuf.hline(0, 10, 96, 0xffff)
+    fbuf.fill(0b0001111100000000)
+    tft.blit_buffer(fbuf,30,30,100,100)
 
-    
-    tft.blit_buffer(fbuf,30,30,100,20)
+ 
