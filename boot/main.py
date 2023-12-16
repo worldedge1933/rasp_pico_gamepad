@@ -18,6 +18,7 @@ class Main_menu:
             self.current_game = 0
         else:
             self.current_game += 1
+        game_icon = self.pen.drawcsv('snake_icon.csv',100,100,reverse=True,mode='r')
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
     def previous_game(self):
         self.LCD.fill_rect(10, 60, len(self.games_name[self.current_game]) * 16, 16, st7789.BLACK)
@@ -28,11 +29,15 @@ class Main_menu:
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
     def show(self) -> None:
         self.LCD.fill(st7789.BLACK)
-        self.pen.drawcsv('check_icon.csv',48,48,186,186,reverse=True)
+        game_icon = self.pen.drawcsv('snake_icon.csv',100,100,reverse=True,mode='r')
+        check_icon = self.pen.drawcsv('check_icon.csv',48,48,reverse=True,mode='r')
+        self.LCD.blit_buffer(game_icon, 10, 80, 100, 100)
+        self.LCD.blit_buffer(check_icon, 186, 186, 48, 48)
         self.LCD.text(vga1_16x16, "game:", 10, 30, color=st7789.WHITE, background=st7789.BLACK)
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
         self.pen.arrow(240 - 30 - 18, 75, 30, 'r')
         self.pen.arrow(240 - 30 - 18, 135, 30, 'l')
+        gc.collect
 #        self.LCD.text(vga1_16x16, "choose", 134, 202, color=st7789.WHITE, background=st7789.BLACK)
 
 
