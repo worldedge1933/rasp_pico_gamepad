@@ -18,4 +18,23 @@ def png2csv(filename: str):
 #        list_of_integers = list(map(int, line.split(',')))
 #        print(type(list_of_integers))
         
-png2csv('snake_icon.png')
+def RGBA2RGB(png:str):
+
+    # 打开图像
+    img = Image.open(png)
+
+    # 检查图像模式
+    if img.mode == 'RGBA':
+        # 创建一个白色背景图片（同样大小）
+        bg = Image.new('RGB', img.size, (255,255,255))
+
+        # 合并背景和图片
+        bg.paste(img, (0,0), img)
+        
+        # 保存为新的文件
+        bg.save(f'{png[:-4]}jpg', quality=95)  # JPEG支持 RGB，quality参数控制输出质量
+
+    else:
+        print("The image is not RGBA.")
+
+RGBA2RGB('check_icon.png')
