@@ -4,40 +4,54 @@ import vga1_16x16
 import gc
 from draw import draw
 import snake
+import framebuf
 
 class Main_menu:
     def __init__(self, LCD: st7789.ST7789) -> None:
         self.LCD = LCD
         self.pen = draw(LCD)
-        self.games_name = ['snake', 'coming']
+        self.games_name = ['snake', 'tetris']
+        self.game_icon = [['snake_icon.565',100,100], ['tetris_icon.565',100,100]]
         self.games = [snake, snake]
         self.current_game = 0
     def next_game(self):
+        length = len(self.games_name[self.current_game]) * 16
         self.LCD.fill_rect(10, 60, len(self.games_name[self.current_game]) * 16, 16, st7789.BLACK)
         if self.current_game == len(self.games_name) - 1:
             self.current_game = 0
         else:
             self.current_game += 1
-        game_icon = self.pen.drawcsv('snake_icon.csv',100,100,reverse=True,mode='r')
+        with open(self.game_icon[self.current_game][0],'rb') as f:
+            self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), self.game_icon[self.current_game][2], self.game_icon[self.current_game][1], framebuf.RGB565),10,80,self.game_icon[self.current_game][1],self.game_icon[self.current_game][2])
+        self.LCD.fill_rect(10, 60, length, 16, st7789.BLACK)
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
+        gc.collect()
     def previous_game(self):
-        self.LCD.fill_rect(10, 60, len(self.games_name[self.current_game]) * 16, 16, st7789.BLACK)
+        length = len(self.games_name[self.current_game]) * 16
         if self.current_game == 0:
             self.current_game = len(self.games_name) - 1
         else:
             self.current_game -= 1
+        with open(self.game_icon[self.current_game][0],'rb') as f:
+            self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), self.game_icon[self.current_game][2], self.game_icon[self.current_game][1], framebuf.RGB565),10,80,self.game_icon[self.current_game][1],self.game_icon[self.current_game][2])
+        self.LCD.fill_rect(10, 60, length, 16, st7789.BLACK)
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
+        gc.collect()
     def show(self) -> None:
         self.LCD.fill(st7789.BLACK)
-        game_icon = self.pen.drawcsv('snake_icon.csv',100,100,reverse=True,mode='r')
-        check_icon = self.pen.drawcsv('check_icon.csv',48,48,reverse=True,mode='r')
-        self.LCD.blit_buffer(game_icon, 10, 80, 100, 100)
-        self.LCD.blit_buffer(check_icon, 186, 186, 48, 48)
+        with open('snake_icon.565','rb') as f:
+            self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), 100, 100, framebuf.RGB565),10,80,100,100)
+        with open('check_icon.565','rb') as f:
+            self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), 48, 48, framebuf.RGB565),186,186,48,48)
+#        game_icon = self.pen.drawcsv('snake_icon.csv',100,100,reverse=True,mode='r')
+#        check_icon = self.pen.drawcsv('check_icon.csv',48,48,reverse=True,mode='r')
+#        self.LCD.blit_buffer(game_icon, 10, 80, 100, 100)
+#        self.LCD.blit_buffer(check_icon, 186, 186, 48, 48)
         self.LCD.text(vga1_16x16, "game:", 10, 30, color=st7789.WHITE, background=st7789.BLACK)
         self.LCD.text(vga1_16x16, f"{self.games_name[self.current_game]}", 10, 60, color=st7789.WHITE, background=st7789.BLACK)
         self.pen.arrow(240 - 30 - 18, 75, 30, 'r')
         self.pen.arrow(240 - 30 - 18, 135, 30, 'l')
-        gc.collect
+        gc.collect()
 #        self.LCD.text(vga1_16x16, "choose", 134, 202, color=st7789.WHITE, background=st7789.BLACK)
 
 
@@ -63,7 +77,9 @@ def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_r
             if key_Y_.value() == 0:
                 while True:
                     if key_Y_.value() == 1:
+                        gc.collect()
                         main_menu.games[main_menu.current_game].main(LCD, key_up_, key_down_, key_left_, key_right_, key_A_, key_B_, key_X_, key_Y_)
+                        gc.collect()
                         break
                 break
 

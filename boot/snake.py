@@ -5,19 +5,20 @@
 
 import random
 import time
-import machine
 from machine import Pin, SPI
 import st7789py as st7789
 import vga1_16x16 
+import gc
 
 
 def set_4_4_pix(LCD : st7789.ST7789, coor : list, color : int) -> None:
     '''
     给定一个游戏坐标，把以这个坐标对应的4*4显示方格设置为黑色
     '''
-    for i in range(0, 4):
-        for j in range(0, 4):
-            LCD.pixel(coor[0]*4 + i, coor[1]*4 + j, color)
+#    for i in range(0, 4):
+#        for j in range(0, 4):
+#            LCD.pixel(coor[0]*4 + i, coor[1]*4 + j, color)
+    LCD.fill_rect(coor[0]*4,coor[1]*4,4,4,color)
             
 def get_next_move(dir : int, snake) -> list:
     '''
@@ -111,14 +112,14 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
             if key_A_.value() == 0:
                 while True:
                     if key_A_.value() == 1:
-                        rest_time = 0.3
+                        rest_time = 0.1
                         level = 1
                         break
                 break
             if key_B_.value() == 0:
                 while True:
                     if key_B_.value() == 1:
-                        rest_time = 0.15
+                        rest_time = 0.07
                         level = 2
                         break
                 break
@@ -132,7 +133,7 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
             if key_Y_.value() == 0:
                 while True:
                     if key_Y_.value() == 1:
-                        rest_time = 0.01
+                        rest_time = 0.03
                         level = 4
                         break
                 break
@@ -183,17 +184,20 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 f.write(str(score))
         LCD.text(vga1_16x16, "new game", 102, 142, color=st7789.WHITE, background=st7789.BLACK)
         LCD.text(vga1_16x16, "exit", 166, 202, color=st7789.WHITE, background=st7789.BLACK)
+        gc.collect()
 #        print(1)
         while True:
             if key_X_.value() == 0:
                 while True:
                     if key_X_.value() == 1:
+                        gc.collect()
                         break
                 break
             if key_Y_.value() == 0:
 #                print(2)
                 while True:
                     if key_Y_.value() == 1:
+                        gc.collect
                         LCD.fill(st7789.BLACK)
                         return
 
@@ -220,6 +224,5 @@ if __name__ == "__main__":
     key_X = Pin(19, Pin.IN, Pin.PULL_UP)
     key_Y = Pin(21, Pin.IN, Pin.PULL_UP)
 
-    snake_state = main(tft, key_up, key_down, key_left, key_right, key_A, key_B, key_X, key_Y)
-    print(snake_state)
+    main(tft, key_up, key_down, key_left, key_right, key_A, key_B, key_X, key_Y)
 

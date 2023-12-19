@@ -18,23 +18,17 @@ def png2csv(filename: str):
 #        list_of_integers = list(map(int, line.split(',')))
 #        print(type(list_of_integers))
         
-def RGBA2RGB(png:str):
+def png2rgb565(filename: str):
+    image = Image.open(filename)
+    image2 = Image.new('RGB',image.size,(0,0,0))
+#    pixels = [[1 if image.getpixel((i,j))[3] == 0 else 0 for i in range(image.width)] for j in range(image.height)]
+    with open(f'{filename[:-4]}.565','wb') as file:
+        for j in range(image.height):
+            for i in range(image.width):
+                if image.getpixel((i,j))[3] == 0:
+                    file.write(b'\x00\x00')
+                else:
+                    file.write(b'\xFF\xFF')
+if __name__ == "__main__":
+    png2rgb565('tetris_icon.png')
 
-    # 打开图像
-    img = Image.open(png)
-
-    # 检查图像模式
-    if img.mode == 'RGBA':
-        # 创建一个白色背景图片（同样大小）
-        bg = Image.new('RGB', img.size, (255,255,255))
-
-        # 合并背景和图片
-        bg.paste(img, (0,0), img)
-        
-        # 保存为新的文件
-        bg.save(f'{png[:-4]}jpg', quality=95)  # JPEG支持 RGB，quality参数控制输出质量
-
-    else:
-        print("The image is not RGBA.")
-
-RGBA2RGB('check_icon.png')

@@ -17,9 +17,9 @@ if __name__ == "__main__":
         )
     tft.fill(st7789.BLUE)
     # FrameBuffer needs 2 bytes for every RGB565 pixel
-    fbuf = framebuf.FrameBuffer(bytearray(50 * 100 * 2), 50, 100, framebuf.RGB565)
+    with open('snake_icon.565','rb') as f:
+        fbuf = framebuf.FrameBuffer(bytearray(f.read()), 100, 100, framebuf.RGB565)
 
-    fbuf.fill(0b0001111100000000)
     tft.blit_buffer(fbuf,30,30,100,100)
 
  
