@@ -5,6 +5,7 @@ import gc
 from draw import draw
 import snake
 import framebuf
+import tetris
 
 class Main_menu:
     def __init__(self, LCD: st7789.ST7789) -> None:
@@ -12,7 +13,7 @@ class Main_menu:
         self.pen = draw(LCD)
         self.games_name = ['snake', 'tetris']
         self.game_icon = [['snake_icon.565',100,100], ['tetris_icon.565',100,100]]
-        self.games = [snake, snake]
+        self.games = [snake, tetris]
         self.current_game = 0
     def next_game(self):
         length = len(self.games_name[self.current_game]) * 16
