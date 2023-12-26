@@ -40,7 +40,7 @@ class Main_menu:
         gc.collect()
     def show(self) -> None:
         self.LCD.fill(st7789.BLACK)
-        with open('snake_icon.565','rb') as f:
+        with open(self.game_icon[self.current_game][0],'rb') as f:
             self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), 100, 100, framebuf.RGB565),10,80,100,100)
         with open('check_icon.565','rb') as f:
             self.LCD.blit_buffer(framebuf.FrameBuffer(bytearray(f.read()), 48, 48, framebuf.RGB565),186,186,48,48)
@@ -61,8 +61,8 @@ class Main_menu:
 
 
 def main(LCD: st7789.ST7789, key_up_: Pin, key_down_: Pin, key_left_: Pin, key_right_: Pin, key_A_: Pin, key_B_: Pin, key_X_: Pin, key_Y_: Pin) -> None:
+    main_menu = Main_menu(LCD)
     while True:
-        main_menu = Main_menu(LCD)
         main_menu.show()
         while True:
             if key_B_.value() == 0:
