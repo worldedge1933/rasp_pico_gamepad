@@ -40,26 +40,36 @@ class Tetris:
         self.pen = draw(LCD)
         self.score = 0
         self.blocks = []
+        self.block_number = random.randint(0,4)
+        self.color_number = random.randint(0,5)
+        self.color = 0
     
     def show(self):
         self.LCD.fill(st7789.BLACK)
-        self.LCD.fill_rect(5,5,121,231,st7789.WHITE)
+        self.LCD.fill_rect(5,5,121,231,0x79ef)
         self.LCD.fill_rect(10,10,111,221,st7789.BLACK)
-        self.LCD.text(vga1_16x16, str(self.score), 140, 20, st7789.WHITE)
-        self.LCD.text(vga1_16x16, 'O', 240 - 30 - 18, 15, st7789.WHITE)
-        self.pen.arrow(240 - 30 - 18, 75, 30, 'r')
-        self.pen.arrow(240 - 30 - 18, 135, 30, 'l')
-        self.pen.arrow(240 - 30 - 18, 195, 30, 'd')
+        for i in range(21):
+            self.LCD.hline(10, 11 * i + 10, 111, 0x79ef)
+        for i in range(11):
+            self.LCD.vline(i * 11 + 10, 10, 221, 0x79ef)
+        self.LCD.text(vga1_16x16, str(self.score), 140, 20, 0x79ef)
+        self.LCD.text(vga1_16x16, 'O', 240 - 30 - 18, 15, 0x79ef)
+        self.pen.arrow(240 - 30 - 18, 75, 30, 'r', color=0x79ef)
+        self.pen.arrow(240 - 30 - 18, 135, 30, 'l', color=0x79ef)
+        self.pen.arrow(240 - 30 - 18, 195, 30, 'd', color=0x79ef)
 
     def show_tet(self):
         self.LCD.fill_rect(10,10,111,221,st7789.BLACK)
-        print(self.maps)
+        for i in range(21):
+            self.LCD.hline(10, 11 * i + 10, 111, 0x79ef)
+        for i in range(11):
+            self.LCD.vline(i * 11 + 10, 10, 221, 0x79ef)
         _y = 11
         for j in range(20):
             _x = 11
             for i in range(10):
                 if (self.maps[j] >> (i+1)) & 1 == 1:
-                    self.LCD.fill_rect(_x, _y, 10, 10, st7789.WHITE)
+                    self.LCD.fill_rect(_x, _y, 10, 10, self.color)
                 _x += 11
             _y += 11
 
@@ -69,14 +79,21 @@ class Tetris:
                   [Array(5,1),Array(6,0),Array(4,1),Array(5,0)],
                   [Array(5,1),Array(6,1),Array(4,1),Array(6,0)],
                   [Array(5,2),Array(5,0),Array(5,1),Array(5,3)]]
-        i = random.randint(0,4)
+        colors = [0x9d37, 0xe679, 0xbdb4, 0xbe56, 0xe46f, st7789.MAGENTA]
         self.blocks = []
-        self.blocks += blocks[i]
+        self.blocks += blocks[self.block_number]
         for block in self.blocks:
             if (self.maps[block.y] >> (block.x + 1)) & 1 == 1:
                 return False
         for block in self.blocks:
-            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.WHITE)
+            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, colors[self.color_number])
+        self.color = colors[self.color_number]
+        self.block_number = random.randint(0,4)
+        self.color_number = random.randint(0,5)
+        self.LCD.fill_rect(140, 75, 50, 50, st7789.BLACK)
+        for block in blocks[self.block_number]:
+            self.LCD.fill_rect(block.x * 11 + 100, block.y * 11 + 80, 10, 10, colors[self.color_number])
+
         return True
     
     def rotation(self):
@@ -93,7 +110,7 @@ class Tetris:
         for block in lastblocks:
             self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.BLACK)
         for block in self.blocks:
-            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.WHITE)      
+            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, self.color)      
         return
             
     def down(self):
@@ -109,7 +126,7 @@ class Tetris:
         for block in lastblocks:
             self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.BLACK)
         for block in self.blocks:
-            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.WHITE)      
+            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, self.color)      
         return True  
     
     def right(self):
@@ -124,7 +141,7 @@ class Tetris:
         for block in lastblocks:
             self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.BLACK)
         for block in self.blocks:
-            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.WHITE)      
+            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, self.color)      
         return
     
     def left(self):
@@ -139,7 +156,7 @@ class Tetris:
         for block in lastblocks:
             self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.BLACK)
         for block in self.blocks:
-            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, st7789.WHITE)      
+            self.LCD.fill_rect(block.x * 11 + 11, block.y * 11 + 11, 10, 10, self.color)      
         return
     
     def line_clear(self):
@@ -152,29 +169,30 @@ class Tetris:
             time.sleep(0.5)
         for line in lines:
             self.maps.pop(line)
-            self.LCD.fill_rect(11, line * 11 + 11, 109, 10, st7789.BLACK)
+            for i in range(10):
+                self.LCD.fill_rect(11*i + 11, line * 11 + 11, 10, 10, st7789.BLACK)
         for _ in lines:
             self.maps.insert(0,int('100000000001',2))
         if leng != 0:
             self.score += (leng ** 2 + leng) // 2
-            self.LCD.text(vga1_16x16, str(self.score), 140, 20, st7789.WHITE)
+            self.LCD.text(vga1_16x16, str(self.score), 140, 20, 0x79ef)
             time.sleep(0.5)
             self.show_tet()
 
     def end(self):
         self.LCD.fill(st7789.BLACK)
-        self.LCD.text(vga1_16x16, "your score :".format(self.score), 4, 30, color=st7789.WHITE, background=st7789.BLACK)
-        self.LCD.text(vga1_16x16, "{0}".format(self.score), 4, 60, color=st7789.WHITE, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "your score :".format(self.score), 4, 30, color=0x79ef, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "{0}".format(self.score), 4, 60, color=0x79ef, background=st7789.BLACK)
         with open(f'tetris_score.csv', "r") as f:
             data = f.readlines()
             best_score = int(data[0])
-        self.LCD.text(vga1_16x16, "best score :".format(best_score), 4, 90, color=st7789.WHITE, background=st7789.BLACK)
-        self.LCD.text(vga1_16x16, "{0}".format(best_score), 4, 120, color=st7789.WHITE, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "best score :".format(best_score), 4, 90, color=0x79ef, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "{0}".format(best_score), 4, 120, color=0x79ef, background=st7789.BLACK)
         if self.score > best_score:
             with open(f'tetris_score.csv', 'w') as f:
                 f.write(str(self.score))
-        self.LCD.text(vga1_16x16, "new game", 102, 142, color=st7789.WHITE, background=st7789.BLACK)
-        self.LCD.text(vga1_16x16, "exit", 166, 202, color=st7789.WHITE, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "new game", 102, 142, color=0x79ef, background=st7789.BLACK)
+        self.LCD.text(vga1_16x16, "exit", 166, 202, color=0x79ef, background=st7789.BLACK)
         while True:
             if self.key_X_.value() == 0:
                 while True:
@@ -268,6 +286,7 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
                 key_B_.irq(handler=None)
                 key_X_.irq(handler=None)
                 key_A_.irq(handler=None)
+                time.sleep(1)
                 can_game = tetris.end()
                 break
         tetris.__init__(LCD)
