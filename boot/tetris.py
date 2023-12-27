@@ -97,7 +97,6 @@ class Tetris:
         return True
     
     def rotation(self):
-        time.sleep(0.1)
         blocks_new = []
         for block in self.blocks:
             dif = block - self.blocks[0]
@@ -130,7 +129,6 @@ class Tetris:
         return True  
     
     def right(self):
-        time.sleep(0.1)
         for block in self.blocks:
             if (self.maps[block.y] >> (block.x+2)) & 1 == 1:
                 return
@@ -145,7 +143,6 @@ class Tetris:
         return
     
     def left(self):
-        time.sleep(0.1)
         for block in self.blocks:
             if (self.maps[block.y] >> (block.x)) & 1 == 1:
                 return
@@ -235,21 +232,27 @@ def main(LCD : st7789.ST7789, key_up_ : Pin, key_down_ : Pin, key_left_ : Pin, k
     def irq_A(p):
         key_B_.irq(handler=None)
         key_X_.irq(handler=None)
-        tetris.rotation()
+        time.sleep(0.01)
+        if p.value() == 0:
+            tetris.rotation()
         key_B_.irq(irq_B,Pin.IRQ_FALLING)
         key_X_.irq(irq_X,Pin.IRQ_FALLING)
 
     def irq_B(p):
         key_X_.irq(handler=None)
         key_A_.irq(handler=None)
-        tetris.right()
+        time.sleep(0.01)
+        if p.value() == 0:
+            tetris.right()
         key_X_.irq(irq_X,Pin.IRQ_FALLING)
         key_A_.irq(irq_A,Pin.IRQ_FALLING)
 
     def irq_X(p):
         key_B_.irq(handler=None)
         key_A_.irq(handler=None)
-        tetris.left()
+        time.sleep(0.01)
+        if p.value() == 0:
+            tetris.left()
         key_B_.irq(irq_B,Pin.IRQ_FALLING)
         key_A_.irq(irq_A,Pin.IRQ_FALLING)
 
